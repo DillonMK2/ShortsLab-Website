@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"C:\\\\ShortsLabWebsite\\\\.mynd\\\\bin\\\\hm-mail.cjs\" --swarm-dir \"C:\\\\ShortsLabWebsite\\\\.mynd\\\\swarms\\\\mmt10spl-e5yt2q\" check --inject"
+          }
+        ]
+      }
+    ]
+  }
+}

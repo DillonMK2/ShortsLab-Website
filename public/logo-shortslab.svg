@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 40" width="200" height="40">
+  <defs>
+    <linearGradient id="labGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8b5cf6"/>
+      <stop offset="100%" style="stop-color:#06b6d4"/>
+    </linearGradient>
+  </defs>
+  <style>
+    .shorts { font-family: 'Sora', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 28px; font-weight: 700; fill: #ffffff; }
+    .lab { font-family: 'Sora', -apple-system, BlinkMacSystemFont, sans-serif; font-size: 28px; font-weight: 700; fill: url(#labGradient); }
+  </style>
+  <text x="0" y="30" class="shorts">Shorts</text>
+  <text x="97" y="30" class="lab">Lab</text>
+</svg>
