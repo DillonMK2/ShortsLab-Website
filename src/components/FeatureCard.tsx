@@ -24,7 +24,7 @@ export default function FeatureCard({
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
 
-  const springConfig = { damping: 25, stiffness: 150 }
+  const springConfig = { damping: 20, stiffness: 400 }
   const springX = useSpring(mouseX, springConfig)
   const springY = useSpring(mouseY, springConfig)
 
@@ -52,7 +52,7 @@ export default function FeatureCard({
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-50px' }}
-        transition={{ duration: 0.5, delay: index * 0.1 }}
+        transition={{ duration: 0.4, delay: index * 0.05 }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         style={{
@@ -64,15 +64,15 @@ export default function FeatureCard({
       >
       {/* Gradient hover effect - contained within the card */}
       <div
-        className="absolute inset-0 rounded-2xl bg-gradient-to-br from-accent-violet/0 via-accent-cyan/0 to-accent-violet/0 group-hover:from-accent-violet/30 group-hover:via-accent-cyan/30 group-hover:to-accent-violet/30 group-focus-visible:from-accent-violet/30 group-focus-visible:via-accent-cyan/30 group-focus-visible:to-accent-violet/30 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-all duration-500"
+        className="absolute inset-0 rounded-2xl bg-gradient-to-br from-accent-violet/0 via-accent-cyan/0 to-accent-violet/0 group-hover:from-accent-violet/30 group-hover:via-accent-cyan/30 group-hover:to-accent-violet/30 group-focus-visible:from-accent-violet/30 group-focus-visible:via-accent-cyan/30 group-focus-visible:to-accent-violet/30 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100 transition-all duration-200"
         aria-hidden="true"
       />
 
       {/* Card content */}
-      <div className="relative h-full rounded-2xl p-6 transition-all duration-300 bg-white/[0.03] backdrop-blur-[12px] border border-white/10 group-hover:bg-white/[0.08] group-hover:border-white/20 group-focus-visible:bg-white/[0.08] group-focus-visible:border-white/20 group-hover:shadow-glow-gradient group-focus-visible:shadow-glow-gradient">
+      <div className="relative h-full rounded-2xl p-6 transition-all duration-150 bg-white/[0.03] backdrop-blur-[12px] border border-white/10 group-hover:bg-white/[0.08] group-hover:border-white/20 group-focus-visible:bg-white/[0.08] group-focus-visible:border-white/20 group-hover:shadow-glow-gradient group-focus-visible:shadow-glow-gradient">
         {/* Icon with gradient glow */}
         <div className="relative mb-4">
-          <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center group-hover:bg-gradient-to-br group-hover:from-accent-violet/20 group-hover:to-accent-cyan/20 group-focus-visible:bg-gradient-to-br group-focus-visible:from-accent-violet/20 group-focus-visible:to-accent-cyan/20 transition-all duration-300">
+          <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center group-hover:bg-gradient-to-br group-hover:from-accent-violet/20 group-hover:to-accent-cyan/20 group-focus-visible:bg-gradient-to-br group-focus-visible:from-accent-violet/20 group-focus-visible:to-accent-cyan/20 transition-all duration-150">
             <div className="text-white/80 group-hover:text-white group-focus-visible:text-white transition-colors">
               <svg
                 className="w-6 h-6"

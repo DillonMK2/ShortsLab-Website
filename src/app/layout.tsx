@@ -3,8 +3,8 @@ import { inter, sora } from './fonts'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'ShortsLab - The All-In-One YouTube Automation Studio',
-  description: 'ShortsLab is the ultimate desktop app for YouTube creators. AI-powered research, script generation, voiceovers, and channel analytics in one powerful studio.',
+  title: 'ShortsFlow - The All-In-One YouTube Automation Studio',
+  description: 'ShortsFlow is the ultimate desktop app for YouTube creators. AI-powered research, script generation, voiceovers, and channel analytics in one powerful studio.',
   keywords: 'YouTube, automation, shorts, AI, script writing, voiceover, analytics, creator tools',
 }
 

@@ -5,8 +5,8 @@ import BackgroundAnimation from '@/components/BackgroundAnimation'
 import FeatureDetailSection from '@/components/FeatureDetailSection'
 
 export const metadata: Metadata = {
-  title: 'Features - ShortsLab | AI-Powered YouTube Creation Tools',
-  description: 'Explore ShortsLab features: AI Assistant, Research & Analytics, Script Scraper, Script Rewriter, VoiceLab, and The Vault. Everything you need for YouTube automation.',
+  title: 'Features - ShortsFlow | AI-Powered YouTube Creation Tools',
+  description: 'Explore ShortsFlow features: AI Assistant, Research & Analytics, Script Scraper, Script Rewriter, VoiceLab, and The Vault. Everything you need for YouTube automation.',
   keywords: 'YouTube tools, AI assistant, script scraper, voiceover generator, channel analytics, content creation',
 }
 
@@ -120,7 +120,7 @@ export default function FeaturesPage() {
             Every Tool You <span className="gradient-text">Need</span>
           </h1>
           <p className="text-xl text-white/60 max-w-2xl mx-auto">
-            ShortsLab brings together research, writing, voiceovers, and analytics
+            ShortsFlow brings together research, writing, voiceovers, and analytics
             in one powerful desktop application built for serious YouTube creators.
           </p>
         </div>

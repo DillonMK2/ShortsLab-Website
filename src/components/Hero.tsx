@@ -119,19 +119,19 @@ export default function Hero() {
             <svg className="w-4 h-4 text-accent-cyan" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
             </svg>
-            Free Forever
+            7-Day Free Trial
           </span>
           <span className="flex items-center gap-2">
             <svg className="w-4 h-4 text-accent-violet" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
             </svg>
-            No Account Required
+            AI-Powered Tools
           </span>
           <span className="flex items-center gap-2">
             <svg className="w-4 h-4 text-accent-purple" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
             </svg>
-            Windows 10+
+            Setup in Seconds
           </span>
         </motion.div>
 
@@ -158,7 +158,7 @@ export default function Hero() {
                     <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
                     <div className="w-3 h-3 rounded-full bg-green-500/80" />
                   </div>
-                  <span className="text-white/40 text-xs ml-2 font-medium">ShortsLab - Dashboard</span>
+                  <span className="text-white/40 text-xs ml-2 font-medium">ShortsFlow - Dashboard</span>
                 </div>
                 {/* Window content preview */}
                 <div className="p-6 space-y-4">

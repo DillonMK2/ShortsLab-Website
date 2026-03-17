@@ -72,7 +72,7 @@ export default function LoginPage() {
               Welcome <span className="gradient-text">Back</span>
             </h1>
             <p className="text-white/60 text-center mb-8">
-              Sign in to your ShortsLab account
+              Sign in to your ShortsFlow account
             </p>
 
             {error && (

@@ -3,15 +3,43 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Button from './Button'
+import { createClient } from '@/lib/supabase/client'
 
 export default function WaitlistForm() {
   const [email, setEmail] = useState('')
   const [submitted, setSubmitted] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (email) {
-      setSubmitted(true)
+    if (!email) return
+
+    setLoading(true)
+    setError(null)
+
+    try {
+      const supabase = createClient()
+
+      const { error: insertError } = await supabase
+        .from('waitlist')
+        .insert([{ email, created_at: new Date().toISOString() }])
+
+      if (insertError) {
+        // Check if it's a duplicate email error
+        if (insertError.code === '23505') {
+          setSubmitted(true) // Already on the list, show success anyway
+        } else {
+          throw insertError
+        }
+      } else {
+        setSubmitted(true)
+      }
+    } catch (err) {
+      console.error('Waitlist error:', err)
+      setError('Something went wrong. Please try again.')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -71,12 +99,16 @@ export default function WaitlistForm() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/40 focus:outline-none focus:border-accent-violet/50 focus:ring-1 focus:ring-accent-violet/20 transition-all"
+                  disabled={loading}
+                  className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-white/40 focus:outline-none focus:border-accent-violet/50 focus:ring-1 focus:ring-accent-violet/20 transition-all disabled:opacity-50"
                 />
-                <Button type="submit" variant="gradient">
-                  Join Waitlist
+                <Button type="submit" variant="gradient" disabled={loading}>
+                  {loading ? 'Joining...' : 'Join Waitlist'}
                 </Button>
               </form>
+              {error && (
+                <p className="text-red-400 text-sm mt-3 text-center">{error}</p>
+              )}
             </motion.div>
           )}
         </AnimatePresence>

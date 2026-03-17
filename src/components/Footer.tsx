@@ -39,7 +39,7 @@ export default function Footer() {
             className="font-sora font-bold text-xl tracking-tight text-white hover:opacity-80 transition-opacity group"
           >
             <span>Shorts</span>
-            <span className="gradient-text">Lab</span>
+            <span className="gradient-text">Flow</span>
           </Link>
 
           {/* Links */}
@@ -77,7 +77,7 @@ export default function Footer() {
         {/* Copyright */}
         <div className="mt-8 pt-8 border-t border-white/[0.05] flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-white/30 text-sm" suppressHydrationWarning>
-            &copy; {new Date().getFullYear()} ShortsLab. All rights reserved.
+            &copy; {new Date().getFullYear()} ShortsFlow. All rights reserved.
           </p>
           <div className="flex items-center gap-4 text-white/30 text-sm">
             <Link href="#" className="hover:text-white/60 transition-colors">Privacy</Link>

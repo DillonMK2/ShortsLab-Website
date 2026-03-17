@@ -6,9 +6,9 @@ import PricingCard from '@/components/PricingCard'
 import WaitlistForm from '@/components/WaitlistForm'
 
 export const metadata: Metadata = {
-  title: 'Pricing - ShortsLab | Starter & Pro Plans for YouTube Creators',
-  description: 'ShortsLab pricing: Credit-based plans for YouTube creators. Starter at $15.99/mo or Pro at $34.99/mo with 7-day free trial.',
-  keywords: 'ShortsLab pricing, YouTube tools pricing, credit system, pro features',
+  title: 'Pricing - ShortsFlow | Starter & Pro Plans for YouTube Creators',
+  description: 'ShortsFlow pricing: Credit-based plans for YouTube creators. Starter at $15.99/mo or Pro at $34.99/mo with 7-day free trial.',
+  keywords: 'ShortsFlow pricing, YouTube tools pricing, credit system, pro features',
 }
 
 const starterTier = {

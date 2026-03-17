@@ -15,8 +15,8 @@
   --accent-2: #06b6d4; /* cyan-500 */
   --accent-3: #a855f7; /* purple-500 */
 
-  /* Gradient combinations */
-  --gradient-primary: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+  /* Gradient combinations - smooth multi-stop gradients */
+  --gradient-primary: linear-gradient(135deg, var(--accent-1) 0%, var(--accent-3) 50%, var(--accent-2) 100%);
   --gradient-secondary: linear-gradient(135deg, var(--accent-3), var(--accent-1));
   --gradient-glow: linear-gradient(135deg, rgba(139, 92, 246, 0.5), rgba(6, 182, 212, 0.5));
 }
@@ -66,6 +66,40 @@ h3 {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+/* Smooth page transitions for Next.js */
+@view-transition {
+  navigation: auto;
+}
+
+/* Main content transition */
+main {
+  view-transition-name: main-content;
+}
+
+::view-transition-old(main-content),
+::view-transition-new(main-content) {
+  animation-duration: 0.2s;
+  animation-timing-function: ease-out;
+}
+
+::view-transition-old(main-content) {
+  animation-name: fade-out;
+}
+
+::view-transition-new(main-content) {
+  animation-name: fade-in;
+}
+
+@keyframes fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 ::selection {

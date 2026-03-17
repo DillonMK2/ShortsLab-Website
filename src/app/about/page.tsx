@@ -6,15 +6,15 @@ import TeamCard from '@/components/TeamCard'
 import GlassCard from '@/components/GlassCard'
 
 export const metadata: Metadata = {
-  title: 'About - ShortsLab | Built for Serious YouTube Creators',
-  description: 'Learn about Dillon, the creator behind ShortsLab. Built from countless hours grinding on YouTube, this tool saves creators massive amounts of time.',
-  keywords: 'ShortsLab creator, about ShortsLab, YouTube creator tools, content creation software',
+  title: 'About - ShortsFlow | Built for Serious YouTube Creators',
+  description: 'Learn about Dillon, the creator behind ShortsFlow. Built from countless hours grinding on YouTube, this tool saves creators massive amounts of time.',
+  keywords: 'ShortsFlow creator, about ShortsFlow, YouTube creator tools, content creation software',
 }
 
 const creator = {
   name: 'Dillon',
   role: 'Creator & Developer',
-  bio: 'After spending countless hours grinding on YouTube, I built ShortsLab to solve my own problems. What started as a personal tool to save time has become something I\'m proud to share with other creators.',
+  bio: 'After spending countless hours grinding on YouTube, I built ShortsFlow to solve my own problems. What started as a personal tool to save time has become something I\'m proud to share with other creators.',
   initial: 'D',
 }
 
@@ -31,10 +31,10 @@ export default function AboutPage() {
             About
           </span>
           <h1 className="mb-6">
-            Built by a <span className="gradient-text">Creator, for Creators</span>
+            One Creator&apos;s <span className="gradient-text">Obsession</span>, Now Yours
           </h1>
           <p className="text-xl text-white/60 max-w-2xl mx-auto">
-            ShortsLab was born from countless hours grinding on YouTube. Jumping between tabs,
+            ShortsFlow was born from countless hours grinding on YouTube. Jumping between tabs,
             losing track of scripts, manually formatting voiceovers — I knew
             there had to be a better way.
           </p>
@@ -57,7 +57,7 @@ export default function AboutPage() {
                   </h3>
                   <p className="text-white/60 leading-relaxed">
                     Growing a YouTube channel is hard enough without fighting your tools.
-                    I built ShortsLab to bring every part of the content creation
+                    I built ShortsFlow to bring every part of the content creation
                     workflow into one focused, beautifully designed desktop app — saving myself hours every week.
                   </p>
                 </div>

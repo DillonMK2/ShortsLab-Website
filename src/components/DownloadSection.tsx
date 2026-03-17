@@ -22,10 +22,10 @@ export default function DownloadSection() {
             Get Started
           </span>
           <h2 className="mb-4">
-            Download <span className="gradient-text">ShortsLab</span>
+            Download <span className="gradient-text">ShortsFlow</span>
           </h2>
           <p className="text-white/60 text-lg mb-10">
-            Start creating better content today. Free to download, no account required.
+            Start creating better content today. Get started with a 7-day free trial.
           </p>
         </motion.div>
 
