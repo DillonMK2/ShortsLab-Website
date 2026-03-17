@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 const footerLinks = [
   { href: '/features', label: 'Features' },
@@ -36,10 +37,15 @@ export default function Footer() {
           {/* Logo */}
           <Link
             href="/"
-            className="font-sora font-bold text-xl tracking-tight text-white hover:opacity-80 transition-opacity group"
+            className="hover:opacity-80 transition-opacity"
           >
-            <span>Shorts</span>
-            <span className="gradient-text">Flow</span>
+            <Image
+              src="/DarkThemeLogo.png"
+              alt="ShortsFlow"
+              width={150}
+              height={28}
+              className="h-7 w-auto"
+            />
           </Link>
 
           {/* Links */}

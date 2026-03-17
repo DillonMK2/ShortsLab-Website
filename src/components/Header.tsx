@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter, usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import Button from './Button'
@@ -95,27 +96,33 @@ export default function Header() {
         <div className="flex items-center">
           <Link
             href="/"
-            className="font-sora font-bold text-xl tracking-tight text-white hover:opacity-80 transition-opacity relative group"
+            className="hover:opacity-80 transition-opacity relative group"
           >
-            <span className="relative z-10">Shorts</span>
-            <span className="relative z-10 gradient-text">Flow</span>
+            <Image
+              src="/DarkThemeLogo.png"
+              alt="ShortsFlow"
+              width={150}
+              height={28}
+              priority
+              className="h-7 w-auto"
+            />
             <span className="absolute -inset-2 rounded-lg bg-gradient-to-r from-accent-violet/0 to-accent-cyan/0 group-hover:from-accent-violet/10 group-hover:to-accent-cyan/10 transition-all duration-300" aria-hidden="true" />
           </Link>
         </div>
 
         {/* Nav Links - Center */}
-        <div className="hidden md:flex items-center justify-center gap-8">
+        <div className="hidden md:grid grid-cols-3 items-center justify-center" style={{ width: '240px', margin: '0 auto' }}>
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className={`relative text-sm font-medium transition-colors duration-200 group ${
+              className={`relative text-sm font-medium transition-colors duration-200 group text-center ${
                 pathname === link.href ? 'text-white' : 'text-white/70 hover:text-white'
               }`}
             >
               {link.label}
               <span
-                className={`absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-accent-violet to-accent-cyan transition-all duration-200 ${
+                className={`absolute -bottom-1 left-1/2 -translate-x-1/2 h-0.5 bg-gradient-to-r from-accent-violet to-accent-cyan transition-all duration-200 ${
                   pathname === link.href ? 'w-full' : 'w-0 group-hover:w-full'
                 }`}
                 aria-hidden="true"
@@ -153,6 +160,17 @@ export default function Header() {
                             <p className="text-xs text-white/50">Signed in as</p>
                             <p className="text-sm text-white truncate">{user.email}</p>
                           </div>
+                          {user.email === 'dagingaking@gmail.com' && (
+                            <Link
+                              href="/admin"
+                              className="flex items-center gap-3 px-4 py-2.5 text-sm text-accent-violet hover:text-white hover:bg-accent-violet/10 transition-colors"
+                            >
+                              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                              </svg>
+                              Admin Panel
+                            </Link>
+                          )}
                           <Link
                             href="/account"
                             className="flex items-center gap-3 px-4 py-2.5 text-sm text-white/70 hover:text-white hover:bg-white/5 transition-colors"
@@ -264,6 +282,16 @@ export default function Header() {
                   <>
                     {user ? (
                       <>
+                        {user.email === 'dagingaking@gmail.com' && (
+                          <Button
+                            href="/admin"
+                            variant="gradient"
+                            className="w-full justify-center"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            Admin Panel
+                          </Button>
+                        )}
                         <Button
                           href="/account"
                           variant="secondary"

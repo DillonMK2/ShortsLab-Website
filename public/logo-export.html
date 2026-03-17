@@ -2,47 +2,289 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>ShortsLab Logo Export</title>
+  <title>ShortsFlow Logo Export</title>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@700&display=swap" rel="stylesheet">
   <style>
+    * { box-sizing: border-box; }
     body {
       margin: 0;
       padding: 40px;
-      background: #080808;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: #1a1a1a;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: #fff;
       min-height: 100vh;
+    }
+    h1 { margin-bottom: 30px; font-weight: 500; }
+    .controls {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    label { font-size: 14px; color: #888; }
+    select, input {
+      padding: 10px 15px;
+      border: 1px solid #333;
+      border-radius: 8px;
+      background: #2a2a2a;
+      color: #fff;
+      font-size: 14px;
+    }
+    button {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+    }
+    .preview-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .preview-box {
+      display: inline-block;
+      border: 2px dashed #333;
+      border-radius: 12px;
+    }
+    .preview-box.dark { background: #080808; }
+    .preview-box.light { background: #ffffff; }
+    .preview-box.transparent {
+      background-image:
+        linear-gradient(45deg, #ccc 25%, transparent 25%),
+        linear-gradient(-45deg, #ccc 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #ccc 75%),
+        linear-gradient(-45deg, transparent 75%, #ccc 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+      background-color: #fff;
     }
     .logo {
       font-family: 'Sora', sans-serif;
-      font-size: 48px;
       font-weight: 700;
       letter-spacing: -0.02em;
+      white-space: nowrap;
     }
-    .shorts {
-      color: #ffffff;
-    }
-    .lab {
-      background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+    .shorts-dark { color: #ffffff; }
+    .shorts-light { color: #000000; }
+    .flow {
+      background: linear-gradient(135deg, #8b5cf6, #a855f7, #06b6d4);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-
-    /* Export box - screenshot this */
-    .export-box {
-      background: #080808;
-      padding: 20px 40px;
-      border: 2px dashed #333;
+    canvas { display: none; }
+    .instructions {
+      margin-top: 40px;
+      padding: 20px;
+      background: #2a2a2a;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .instructions h3 { margin-top: 0; color: #8b5cf6; }
+    .instructions code {
+      background: #333;
+      padding: 2px 6px;
+      border-radius: 4px;
     }
   </style>
 </head>
 <body>
-  <div class="export-box">
-    <span class="logo">
-      <span class="shorts">Shorts</span><span class="lab">Lab</span>
-    </span>
+  <h1>ShortsFlow Logo Export Tool</h1>
+
+  <div class="controls">
+    <div class="control-group">
+      <label>Theme</label>
+      <select id="theme">
+        <option value="dark">Dark (white text)</option>
+        <option value="light">Light (black text)</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label>Size</label>
+      <select id="size">
+        <option value="48">Small (48px)</option>
+        <option value="72">Medium (72px)</option>
+        <option value="96" selected>Large (96px)</option>
+        <option value="144">Extra Large (144px)</option>
+        <option value="192">2x (192px)</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label>Scale (for high-res export)</label>
+      <select id="scale">
+        <option value="1">1x</option>
+        <option value="2" selected>2x</option>
+        <option value="3">3x</option>
+        <option value="4">4x</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label>Background</label>
+      <select id="background">
+        <option value="solid">Solid Color</option>
+        <option value="transparent" selected>Transparent</option>
+      </select>
+    </div>
+    <div class="control-group">
+      <label>Padding (px)</label>
+      <input type="number" id="padding" value="2" min="0" max="100" style="width: 70px;">
+    </div>
+    <div class="control-group">
+      <label>Letter Spacing (em)</label>
+      <input type="number" id="letterSpacing" value="-0.02" min="-0.2" max="0.5" step="0.01" style="width: 80px;">
+    </div>
+    <div class="control-group">
+      <label>&nbsp;</label>
+      <button onclick="exportPNG()">Download PNG</button>
+    </div>
   </div>
+
+  <div class="preview-container">
+    <div>
+      <div class="preview-box dark" id="preview">
+        <span class="logo" id="logoText">
+          <span class="shorts-dark" id="shorts">Shorts</span><span class="flow" id="flow">Flow</span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <canvas id="canvas"></canvas>
+
+  <div class="instructions">
+    <h3>How to Export</h3>
+    <p>1. Select your preferred theme and size above</p>
+    <p>2. Choose a scale factor (2x or higher recommended for crisp exports)</p>
+    <p>3. Click "Download PNG" to save the logo</p>
+    <p><strong>For SVG with paths:</strong> The SVG files in <code>/public/logo-shortsflow.svg</code> and <code>/public/logo-shortsflow-light.svg</code> now contain path data instead of text, making them font-independent and fully exportable.</p>
+    <p><strong>For exact Sora font paths:</strong> Open this page in a browser, right-click the logo, and use browser dev tools or a tool like <a href="https://vectr.com" style="color:#8b5cf6">Vectr</a> to trace the text. Alternatively, use Figma/Illustrator to type the text in Sora Bold and convert to outlines.</p>
+  </div>
+
+  <script>
+    const themeSelect = document.getElementById('theme');
+    const sizeSelect = document.getElementById('size');
+    const bgSelect = document.getElementById('background');
+    const paddingInput = document.getElementById('padding');
+    const letterSpacingInput = document.getElementById('letterSpacing');
+    const preview = document.getElementById('preview');
+    const logoText = document.getElementById('logoText');
+    const shorts = document.getElementById('shorts');
+
+    function updatePreview() {
+      const theme = themeSelect.value;
+      const size = sizeSelect.value;
+      const bg = bgSelect.value;
+      const padding = paddingInput.value;
+      const letterSpacing = letterSpacingInput.value;
+
+      // Set preview background
+      if (bg === 'transparent') {
+        preview.className = 'preview-box transparent';
+      } else {
+        preview.className = 'preview-box ' + theme;
+      }
+
+      // Update preview padding to match export
+      preview.style.padding = padding + 'px';
+
+      // Update letter spacing
+      logoText.style.letterSpacing = letterSpacing + 'em';
+
+      logoText.style.fontSize = size + 'px';
+
+      if (theme === 'dark') {
+        shorts.className = 'shorts-dark';
+      } else {
+        shorts.className = 'shorts-light';
+      }
+    }
+
+    themeSelect.addEventListener('change', updatePreview);
+    sizeSelect.addEventListener('change', updatePreview);
+    bgSelect.addEventListener('change', updatePreview);
+    paddingInput.addEventListener('input', updatePreview);
+    letterSpacingInput.addEventListener('input', updatePreview);
+
+    async function exportPNG() {
+      const theme = themeSelect.value;
+      const size = parseInt(sizeSelect.value);
+      const scale = parseInt(document.getElementById('scale').value);
+
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+
+      // Calculate dimensions
+      const padding = parseInt(document.getElementById('padding').value) || 0;
+      const letterSpacing = parseFloat(document.getElementById('letterSpacing').value) || 0;
+      const text = 'ShortsFlow';
+
+      // Set font and measure
+      ctx.font = `700 ${size * scale}px Sora, sans-serif`;
+      ctx.letterSpacing = `${letterSpacing * size * scale}px`;
+      const metrics = ctx.measureText(text);
+      const textWidth = metrics.width;
+      const textHeight = size * scale;
+
+      // Add buffer to prevent edge clipping
+      const buffer = Math.abs(letterSpacing * size * scale) + (4 * scale);
+      canvas.width = textWidth + (padding * 2 * scale) + buffer;
+      canvas.height = textHeight + (padding * 2 * scale) + buffer;
+
+      // Background (only fill if not transparent)
+      const bgSetting = document.getElementById('background').value;
+      if (bgSetting === 'solid') {
+        ctx.fillStyle = theme === 'dark' ? '#080808' : '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+
+      // Re-apply font and letter spacing after canvas resize (resets context)
+      ctx.font = `700 ${size * scale}px Sora, sans-serif`;
+      ctx.letterSpacing = `${letterSpacing * size * scale}px`;
+
+      // Draw "Shorts"
+      ctx.fillStyle = theme === 'dark' ? '#ffffff' : '#000000';
+      const shortsText = 'Shorts';
+      const drawX = padding * scale + (buffer / 2);
+      const drawY = padding * scale + textHeight * 0.75 + (buffer / 2);
+      ctx.fillText(shortsText, drawX, drawY);
+
+      // Draw "Flow" with gradient
+      const shortsWidth = ctx.measureText(shortsText).width;
+      const flowX = drawX + shortsWidth;
+
+      const gradient = ctx.createLinearGradient(flowX, 0, flowX + ctx.measureText('Flow').width, canvas.height);
+      gradient.addColorStop(0, '#8b5cf6');
+      gradient.addColorStop(0.5, '#a855f7');
+      gradient.addColorStop(1, '#06b6d4');
+
+      ctx.fillStyle = gradient;
+      ctx.fillText('Flow', flowX, drawY);
+
+      // Download
+      const link = document.createElement('a');
+      const bgSuffix = bgSetting === 'transparent' ? '-transparent' : '';
+      link.download = `shortsflow-logo-${theme}-${size}px-${scale}x${bgSuffix}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    // Initialize
+    updatePreview();
+  </script>
 </body>
 </html>
