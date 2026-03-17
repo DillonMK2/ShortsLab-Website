@@ -26,6 +26,8 @@ type WebhookEvent = {
     id: string
     attributes: {
       customer_id: number
+      product_id: number
+      variant_id: number
       status: string
       product_name: string
       variant_name: string
@@ -48,11 +50,37 @@ function verifySignature(
   return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(digest))
 }
 
-function getPlanFromVariant(variantName: string): string {
-  const name = variantName.toLowerCase()
-  if (name.includes('pro')) return 'pro'
-  if (name.includes('starter')) return 'starter'
-  return 'free'
+function getPlanFromAttributes(attributes: WebhookEvent['data']['attributes']): string {
+  const { variant_name, product_name, variant_id, product_id } = attributes
+
+  // Log for debugging - helps identify the actual IDs/names from LemonSqueezy
+  console.log('LemonSqueezy attributes:', {
+    variant_id,
+    variant_name,
+    product_id,
+    product_name
+  })
+
+  // Check variant_name first
+  const variantLower = (variant_name || '').toLowerCase()
+  if (variantLower.includes('pro')) return 'pro'
+  if (variantLower.includes('starter')) return 'starter'
+
+  // Check product_name as fallback
+  const productLower = (product_name || '').toLowerCase()
+  if (productLower.includes('pro')) return 'pro'
+  if (productLower.includes('starter')) return 'starter'
+
+  // Fallback: check combined names for "shorts lab" products
+  // Pro tier is typically higher-priced, starter is entry-level
+  const combined = `${variantLower} ${productLower}`
+  if (combined.includes('pro') || combined.includes('premium') || combined.includes('unlimited')) return 'pro'
+  if (combined.includes('starter') || combined.includes('basic') || combined.includes('lite')) return 'starter'
+
+  // If we still can't determine, log a warning and default to starter for paid subscriptions
+  // (since free users wouldn't trigger a subscription webhook)
+  console.warn(`Could not determine plan from variant_name="${variant_name}" product_name="${product_name}". Defaulting to starter.`)
+  return 'starter'
 }
 
 function getCreditsForPlan(plan: string): number {
@@ -113,7 +141,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const plan = getPlanFromVariant(attributes.variant_name)
+    const plan = getPlanFromAttributes(attributes)
     const credits = getCreditsForPlan(plan)
 
     switch (eventName) {
