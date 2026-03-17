@@ -1,7 +1,4 @@
 import { Metadata } from 'next'
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
-import BackgroundAnimation from '@/components/BackgroundAnimation'
 import FeatureDetailSection from '@/components/FeatureDetailSection'
 
 export const metadata: Metadata = {
@@ -106,10 +103,7 @@ const features = [
 
 export default function FeaturesPage() {
   return (
-    <main className="min-h-screen bg-background relative">
-      <BackgroundAnimation />
-      <Header />
-
+    <>
       {/* Hero */}
       <section className="pt-32 pb-16 relative z-10">
         <div className="max-w-4xl mx-auto px-6 text-center">
@@ -136,8 +130,6 @@ export default function FeaturesPage() {
           />
         ))}
       </div>
-
-      <Footer />
-    </main>
+    </>
   )
 }

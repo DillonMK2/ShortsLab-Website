@@ -1,7 +1,4 @@
 import { Metadata } from 'next'
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
-import BackgroundAnimation from '@/components/BackgroundAnimation'
 import TeamCard from '@/components/TeamCard'
 import GlassCard from '@/components/GlassCard'
 
@@ -20,10 +17,7 @@ const creator = {
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-background relative">
-      <BackgroundAnimation />
-      <Header />
-
+    <>
       {/* Hero */}
       <section className="pt-32 pb-20 relative z-10">
         <div className="max-w-4xl mx-auto px-6 text-center">
@@ -129,8 +123,6 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
-
-      <Footer />
-    </main>
+    </>
   )
 }
