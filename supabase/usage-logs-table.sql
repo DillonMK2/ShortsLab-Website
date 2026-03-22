@@ -4,7 +4,7 @@
 CREATE TABLE IF NOT EXISTS usage_logs (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  feature TEXT NOT NULL CHECK (feature IN ('chat', 'rewrite', 'voiceover', 'research')),
+  feature TEXT NOT NULL CHECK (feature IN ('chat', 'rewrite', 'voiceover', 'ideation', 'research')),
   credits_used INTEGER NOT NULL DEFAULT 1,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );

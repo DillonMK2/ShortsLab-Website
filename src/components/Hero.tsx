@@ -94,7 +94,7 @@ export default function Hero() {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
-          <Button href="#download" variant="gradient" size="lg" glow>
+          <Button href="https://github.com/DillonMK2/ShortsLab-Website/releases/download/v1.0.0/ShortsFlow_1.0.0_x64-setup.exe" variant="gradient" size="lg" glow>
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>

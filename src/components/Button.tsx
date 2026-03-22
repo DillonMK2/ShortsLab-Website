@@ -36,7 +36,6 @@ export default function Button(props: ButtonProps) {
     rounded-xl
     transition-all duration-300 ease-out
     cursor-pointer
-    border
     relative
     overflow-hidden
   `
@@ -44,7 +43,7 @@ export default function Button(props: ButtonProps) {
   const variants = {
     primary: `
       bg-white/5 backdrop-blur-sm
-      border-white/10
+      border border-white/10
       text-white
       hover:bg-white/10 hover:border-white/20
       hover:scale-[1.02]
@@ -52,7 +51,7 @@ export default function Button(props: ButtonProps) {
     `,
     secondary: `
       bg-transparent
-      border-white/10
+      border border-white/10
       text-white/80
       hover:bg-white/5 hover:text-white hover:border-white/20
       hover:scale-[1.02]
@@ -60,7 +59,6 @@ export default function Button(props: ButtonProps) {
     `,
     gradient: `
       bg-gradient-to-r from-accent-violet to-accent-cyan
-      border-transparent
       text-white font-semibold
       hover:opacity-90 hover:scale-[1.02]
       active:scale-[0.98]

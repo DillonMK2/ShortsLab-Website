@@ -5,25 +5,47 @@ import { createAdminClient } from '@/lib/supabase/admin'
 const ADMIN_EMAIL = 'dagingaking@gmail.com'
 
 export async function GET() {
-  // Verify admin access
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user || user.email !== ADMIN_EMAIL) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  }
-
-  const adminClient = createAdminClient()
-
-  const now = new Date()
-  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-  const weekStart = new Date(todayStart)
-  weekStart.setDate(weekStart.getDate() - weekStart.getDay())
-  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
-  const thirtyDaysAgo = new Date(todayStart)
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
-
   try {
+    // Verify admin access
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user || user.email !== ADMIN_EMAIL) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    console.log('Admin usage: Fetching usage stats')
+
+    const adminClient = createAdminClient()
+
+    const now = new Date()
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    const weekStart = new Date(todayStart)
+    weekStart.setDate(weekStart.getDate() - weekStart.getDay())
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
+    const thirtyDaysAgo = new Date(todayStart)
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+
+    // Check if usage_logs table exists by doing a simple query
+    const { error: tableCheckError } = await adminClient
+      .from('usage_logs')
+      .select('id')
+      .limit(1)
+
+    if (tableCheckError) {
+      console.error('Usage logs table error:', JSON.stringify(tableCheckError, null, 2))
+      // Return empty data if table doesn't exist
+      if (tableCheckError.code === '42P01' || tableCheckError.message?.includes('does not exist')) {
+        console.log('Admin usage: usage_logs table does not exist, returning empty data')
+        return NextResponse.json({
+          totals: { today: 0, week: 0, month: 0 },
+          featureBreakdown: { chat: 0, rewrite: 0, voiceover: 0, research: 0 },
+          topUsers: [],
+          dailyData: generateEmptyDailyData(thirtyDaysAgo),
+        })
+      }
+    }
+
     // Get total API calls for today, this week, this month
     const [todayResult, weekResult, monthResult] = await Promise.all([
       adminClient
@@ -39,6 +61,8 @@ export async function GET() {
         .select('id', { count: 'exact', head: true })
         .gte('created_at', monthStart.toISOString()),
     ])
+
+    console.log(`Admin usage: Today=${todayResult.count}, Week=${weekResult.count}, Month=${monthResult.count}`)
 
     // Get breakdown by feature (this month)
     const { data: featureBreakdown } = await adminClient
@@ -67,7 +91,9 @@ export async function GET() {
 
     const userCredits: Record<string, number> = {}
     topUsersRaw?.forEach((log) => {
-      userCredits[log.user_id] = (userCredits[log.user_id] || 0) + log.credits_used
+      if (log.user_id) {
+        userCredits[log.user_id] = (userCredits[log.user_id] || 0) + (log.credits_used || 0)
+      }
     })
 
     const topUserIds = Object.entries(userCredits)
@@ -77,12 +103,20 @@ export async function GET() {
     // Get user emails for top users
     const topUsers: { user_id: string; email: string; credits_used: number }[] = []
     for (const [userId, credits] of topUserIds) {
-      const { data: userData } = await adminClient.auth.admin.getUserById(userId)
-      topUsers.push({
-        user_id: userId,
-        email: userData.user?.email || 'Unknown',
-        credits_used: credits,
-      })
+      try {
+        const { data: userData } = await adminClient.auth.admin.getUserById(userId)
+        topUsers.push({
+          user_id: userId,
+          email: userData.user?.email || 'Unknown',
+          credits_used: credits,
+        })
+      } catch {
+        topUsers.push({
+          user_id: userId,
+          email: 'Unknown',
+          credits_used: credits,
+        })
+      }
     }
 
     // Get daily API calls for last 30 days
@@ -131,4 +165,17 @@ export async function GET() {
       { status: 500 }
     )
   }
+}
+
+function generateEmptyDailyData(startDate: Date) {
+  const dailyData = []
+  for (let i = 0; i < 30; i++) {
+    const date = new Date(startDate)
+    date.setDate(date.getDate() + i)
+    dailyData.push({
+      date: date.toISOString().split('T')[0],
+      count: 0,
+    })
+  }
+  return dailyData
 }

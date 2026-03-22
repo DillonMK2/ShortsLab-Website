@@ -46,7 +46,7 @@ export default function DownloadSection() {
               whileTap={{ scale: 0.98 }}
             >
               <Button
-                href="#"
+                href="https://github.com/DillonMK2/ShortsLab-Website/releases/download/v1.0.0/ShortsFlow_1.0.0_x64-setup.exe"
                 variant="gradient"
                 size="lg"
                 glow

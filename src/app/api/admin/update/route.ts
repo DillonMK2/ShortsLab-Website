@@ -16,6 +16,8 @@ export async function POST(request: NextRequest) {
   const body = await request.json()
   const { user_id, credits, plan, status } = body
 
+  console.log('Admin update request:', { user_id, credits, plan, status })
+
   if (!user_id) {
     return NextResponse.json({ error: 'user_id is required' }, { status: 400 })
   }
@@ -28,7 +30,12 @@ export async function POST(request: NextRequest) {
   }
 
   if (credits !== undefined) {
-    updates.credits = parseInt(credits, 10)
+    const creditsValue = parseInt(credits, 10)
+    // Allow -1 as special "unlimited" value
+    if (isNaN(creditsValue) || (creditsValue < -1)) {
+      return NextResponse.json({ error: 'Invalid credits value' }, { status: 400 })
+    }
+    updates.credits = creditsValue
   }
 
   if (plan !== undefined) {
@@ -46,24 +53,29 @@ export async function POST(request: NextRequest) {
   }
 
   // Check if subscription exists
-  const { data: existing } = await adminClient
+  const { data: existing, error: existingError } = await adminClient
     .from('subscriptions')
-    .select('user_id')
+    .select('*')
     .eq('user_id', user_id)
     .single()
 
-  if (!existing) {
+  console.log('Existing subscription:', existing ? { plan: existing.plan, status: existing.status, credits: existing.credits } : 'NONE')
+
+  if (!existing || existingError) {
     // Create subscription if it doesn't exist
+    const insertData = {
+      user_id,
+      plan: plan || 'free',
+      status: status || 'active',
+      credits: credits !== undefined ? parseInt(credits, 10) : 0,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }
+    console.log('Creating new subscription:', insertData)
+
     const { error: insertError } = await adminClient
       .from('subscriptions')
-      .insert({
-        user_id,
-        plan: plan || 'free',
-        status: status || 'active',
-        credits: credits !== undefined ? parseInt(credits, 10) : 0,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
+      .insert(insertData)
 
     if (insertError) {
       console.error('Error creating subscription:', insertError)
@@ -71,6 +83,8 @@ export async function POST(request: NextRequest) {
     }
   } else {
     // Update existing subscription
+    console.log('Updating subscription with:', updates)
+
     const { error: updateError } = await adminClient
       .from('subscriptions')
       .update(updates)
@@ -93,6 +107,11 @@ export async function POST(request: NextRequest) {
     console.error('Error fetching updated subscription:', fetchError)
     return NextResponse.json({ error: 'Update succeeded but failed to fetch result' }, { status: 500 })
   }
+
+  console.log('Admin update result:', {
+    requested: { credits, plan, status },
+    saved: { credits: updated.credits, plan: updated.plan, status: updated.status }
+  })
 
   return NextResponse.json({ subscription: updated })
 }
