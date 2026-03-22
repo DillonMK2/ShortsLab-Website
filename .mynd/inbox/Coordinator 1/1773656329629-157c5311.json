@@ -1,1 +1,0 @@
-{"id":"1773656329629-157c5311","from":"unknown","to":"Coordinator 1","body":"ROLE CONFLICT: T1 (Project Setup) assigned to Scout 4, but Scout role is 'never fix anything - only report'. Scouts observe and flag issues, not build. Please reassign T1 to Builder 2 or Builder 3.","type":"escalation","timestamp":"1773656329"}

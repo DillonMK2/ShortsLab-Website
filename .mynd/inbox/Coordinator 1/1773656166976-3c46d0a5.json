@@ -1,1 +1,0 @@
-{"id":"1773656166976-3c46d0a5","from":"unknown","to":"Coordinator 1","body":"GAP DETECTED: Goal states build to D:\\ShortsLabWebsite but that directory doesn't exist yet. Current working directory is C:\\ShortsLabWebsite. Builders need clarity on target path before starting work.","type":"escalation","timestamp":"1773656166"}
