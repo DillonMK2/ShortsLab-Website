@@ -47,7 +47,10 @@ function verifySignature(
 ): boolean {
   const hmac = crypto.createHmac('sha256', secret)
   const digest = hmac.update(payload).digest('hex')
-  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(digest))
+  const sigBuffer = Buffer.from(signature)
+  const digestBuffer = Buffer.from(digest)
+  if (sigBuffer.length !== digestBuffer.length) return false
+  return crypto.timingSafeEqual(sigBuffer, digestBuffer)
 }
 
 function getPlanFromAttributes(attributes: WebhookEvent['data']['attributes']): string {
@@ -127,6 +130,19 @@ export async function POST(request: NextRequest) {
     const event: WebhookEvent = JSON.parse(payload)
     const eventName = event.meta.event_name
     const { attributes, id: subscriptionId } = event.data
+
+    // Idempotency check - prevent duplicate processing
+    const webhookId = `${subscriptionId}-${eventName}`
+    const { data: existing } = await getSupabaseAdmin()
+      .from('webhook_events')
+      .select('id')
+      .eq('event_id', webhookId)
+      .single()
+
+    if (existing) {
+      console.log('Webhook already processed:', webhookId)
+      return NextResponse.json({ received: true })
+    }
 
     console.log(`Processing LemonSqueezy event: ${eventName}`)
 
@@ -214,6 +230,11 @@ export async function POST(request: NextRequest) {
       default:
         console.log(`Unhandled event type: ${eventName}`)
     }
+
+    // Record processed webhook for idempotency
+    await getSupabaseAdmin()
+      .from('webhook_events')
+      .insert({ event_id: webhookId, processed_at: new Date().toISOString() })
 
     return NextResponse.json({ received: true })
   } catch (error) {
