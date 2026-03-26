@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Button from './Button'
 import { useUser } from '@/hooks/useUser'
@@ -26,6 +27,12 @@ export default function PricingCard({
   checkoutUrl,
 }: PricingCardProps) {
   const { user } = useUser()
+  const [origin, setOrigin] = useState('')
+
+  // Set origin after hydration to avoid server/client mismatch
+  useEffect(() => {
+    setOrigin(window.location.origin)
+  }, [])
 
   // Build checkout URL with email pre-fill and user_id for webhook
   const getCheckoutHref = () => {
@@ -44,11 +51,8 @@ export default function PricingCard({
     }
 
     // Redirect back to site after checkout
-    const redirectUrl = typeof window !== 'undefined'
-      ? `${window.location.origin}/?subscribed=true`
-      : ''
-    if (redirectUrl) {
-      url.searchParams.set('checkout[redirect_url]', redirectUrl)
+    if (origin) {
+      url.searchParams.set('checkout[redirect_url]', `${origin}/?subscribed=true`)
     }
 
     return url.toString()

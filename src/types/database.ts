@@ -20,3 +20,9 @@ export type UsageLog = {
   credits_used: number
   created_at: string
 }
+
+export type PrivateVoiceUser = {
+  id: string
+  email: string
+  created_at: string
+}

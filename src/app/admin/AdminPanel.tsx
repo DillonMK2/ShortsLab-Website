@@ -22,6 +22,7 @@ type UserResult = {
   email: string
   created_at: string
   subscription: Subscription | null
+  hasPrivateVoiceAccess: boolean
 }
 
 type EditingState = {
@@ -112,6 +113,7 @@ export default function AdminPanel({ userEmail }: { userEmail: string }) {
   const [successMsg, setSuccessMsg] = useState<Record<string, string>>({})
   const [togglingUnlimited, setTogglingUnlimited] = useState<Record<string, boolean>>({})
   const [pendingChanges, setPendingChanges] = useState<Record<string, NodeJS.Timeout>>({})
+  const [togglingPrivateVoice, setTogglingPrivateVoice] = useState<Record<string, boolean>>({})
 
   // Use ref to track latest editing values (avoids stale closure issues)
   const editingRef = useRef<Record<string, EditingState>>({})
@@ -503,6 +505,40 @@ export default function AdminPanel({ userEmail }: { userEmail: string }) {
     }
   }
 
+  const handleTogglePrivateVoice = async (email: string, currentAccess: boolean) => {
+    setTogglingPrivateVoice(prev => ({ ...prev, [email]: true }))
+
+    try {
+      const res = await fetch('/api/admin/private-voice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          enabled: !currentAccess,
+        }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to toggle private voice access')
+      }
+
+      // Update local state
+      setUsers(prev =>
+        prev.map(u =>
+          u.email === email
+            ? { ...u, hasPrivateVoiceAccess: !currentAccess }
+            : u
+        )
+      )
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to toggle private voice access')
+    } finally {
+      setTogglingPrivateVoice(prev => ({ ...prev, [email]: false }))
+    }
+  }
+
   const saveUserWithValues = async (userId: string, values: EditingState) => {
     setSaving(prev => ({ ...prev, [userId]: true }))
     setSuccessMsg(prev => ({ ...prev, [userId]: '' }))
@@ -815,12 +851,13 @@ export default function AdminPanel({ userEmail }: { userEmail: string }) {
                     <table className="w-full table-fixed">
                       <thead>
                         <tr className="border-b border-white/10 bg-white/[0.02]">
-                          <th className="w-[28%] px-4 py-3 text-left text-xs font-semibold text-white/40 uppercase tracking-wider">User</th>
-                          <th className="w-[12%] px-3 py-3 text-left text-xs font-semibold text-white/40 uppercase tracking-wider">Plan</th>
-                          <th className="w-[12%] px-3 py-3 text-left text-xs font-semibold text-white/40 uppercase tracking-wider">Status</th>
-                          <th className="w-[22%] px-3 py-3 text-left text-xs font-semibold text-white/40 uppercase tracking-wider">Credits</th>
-                          <th className="w-[13%] px-3 py-3 text-left text-xs font-semibold text-white/40 uppercase tracking-wider">Signed Up</th>
-                          <th className="w-[13%] px-3 py-3 text-center text-xs font-semibold text-white/40 uppercase tracking-wider">Status</th>
+                          <th className="w-[24%] px-4 py-3 text-left text-xs font-semibold text-white/40 uppercase tracking-wider">User</th>
+                          <th className="w-[10%] px-3 py-3 text-left text-xs font-semibold text-white/40 uppercase tracking-wider">Plan</th>
+                          <th className="w-[10%] px-3 py-3 text-left text-xs font-semibold text-white/40 uppercase tracking-wider">Status</th>
+                          <th className="w-[18%] px-3 py-3 text-left text-xs font-semibold text-white/40 uppercase tracking-wider">Credits</th>
+                          <th className="w-[10%] px-3 py-3 text-center text-xs font-semibold text-white/40 uppercase tracking-wider">Voice</th>
+                          <th className="w-[12%] px-3 py-3 text-left text-xs font-semibold text-white/40 uppercase tracking-wider">Signed Up</th>
+                          <th className="w-[10%] px-3 py-3 text-center text-xs font-semibold text-white/40 uppercase tracking-wider">Status</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-white/5">
@@ -930,6 +967,34 @@ export default function AdminPanel({ userEmail }: { userEmail: string }) {
                                       </button>
                                     </>
                                   )}
+                                </div>
+                              </td>
+                              <td className="px-3 py-4">
+                                <div className="flex items-center justify-center">
+                                  <button
+                                    onClick={() => handleTogglePrivateVoice(user.email, user.hasPrivateVoiceAccess)}
+                                    disabled={togglingPrivateVoice[user.email]}
+                                    className={`relative w-10 h-5 rounded-full transition-all ${
+                                      user.hasPrivateVoiceAccess
+                                        ? 'bg-gradient-to-r from-pink-500 to-rose-500'
+                                        : 'bg-white/10'
+                                    } ${togglingPrivateVoice[user.email] ? 'opacity-50' : ''}`}
+                                    title={user.hasPrivateVoiceAccess ? 'Disable private voice access' : 'Enable private voice access'}
+                                  >
+                                    <span
+                                      className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all ${
+                                        user.hasPrivateVoiceAccess ? 'left-5' : 'left-0.5'
+                                      }`}
+                                    />
+                                    {togglingPrivateVoice[user.email] && (
+                                      <span className="absolute inset-0 flex items-center justify-center">
+                                        <svg className="w-3 h-3 animate-spin text-white" fill="none" viewBox="0 0 24 24">
+                                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                        </svg>
+                                      </span>
+                                    )}
+                                  </button>
                                 </div>
                               </td>
                               <td className="px-3 py-4">

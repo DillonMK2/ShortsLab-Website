@@ -60,6 +60,7 @@ export async function GET(request: NextRequest) {
 
     // Get subscriptions for matching users
     const userIds = matchingUsers.map(u => u.id)
+    const userEmails = matchingUsers.map(u => u.email).filter(Boolean) as string[]
 
     const { data: subscriptions, error: subError } = await adminClient
       .from('subscriptions')
@@ -72,6 +73,19 @@ export async function GET(request: NextRequest) {
       console.log('Continuing without subscription data')
     }
 
+    // Get private voice access for matching users
+    const { data: privateVoiceUsers, error: pvError } = await adminClient
+      .from('private_voice_users')
+      .select('email')
+      .in('email', userEmails)
+
+    if (pvError) {
+      console.error('Error fetching private voice users:', JSON.stringify(pvError, null, 2))
+      console.log('Continuing without private voice data')
+    }
+
+    const privateVoiceEmails = new Set(privateVoiceUsers?.map(pv => pv.email) || [])
+
     // Combine user and subscription data
     const results = matchingUsers.map(u => {
       const subscription = subscriptions?.find(s => s.user_id === u.id)
@@ -80,6 +94,7 @@ export async function GET(request: NextRequest) {
         email: u.email,
         created_at: u.created_at,
         subscription: subscription || null,
+        hasPrivateVoiceAccess: u.email ? privateVoiceEmails.has(u.email) : false,
       }
     })
 
